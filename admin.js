@@ -37,7 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 
     function initializeApp() {
-        const API_URL = 'http://localhost:3000';
+        const getApiBaseUrl = () => {
+            if (window.location.protocol === 'file:') {
+                return 'http://localhost:3000';
+            }
+            return window.location.origin;
+        };
+
+        const API_URL = getApiBaseUrl();
+
+        const resolveAssetUrl = (url) => {
+            if (!url) return '';
+            if (/^https?:\/\//i.test(url)) return url;
+            return `${API_URL}${url}`;
+        };
 
         const imageCropper = new ImageCropper('image-cropper-modal', 'image-to-crop', 'confirm-crop-btn');
         let croppedImageBlob = null;
@@ -84,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const artists = await api.get('/api/artists');
                 const filtered = artists.filter(a => a.name.toLowerCase().includes(searchTerm.toLowerCase()));
                 const tbody = document.querySelector('#artists-section tbody');
-                tbody.innerHTML = filtered.map(artist => `<tr><td><img src="${API_URL}${artist.image_url}" class="table-thumb"></td><td>${artist.name}</td><td>${artist.bio ? artist.bio.substring(0, 50) + '...' : 'N/A'}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${artist.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${artist.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="4">No artists found.</td></tr>`;
+                tbody.innerHTML = filtered.map(artist => `<tr><td><img src="${resolveAssetUrl(artist.image_url)}" class="table-thumb"></td><td>${artist.name}</td><td>${artist.bio ? artist.bio.substring(0, 50) + '...' : 'N/A'}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${artist.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${artist.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="4">No artists found.</td></tr>`;
                 app.initScrollAnimations(tbody);
             },
             renderSongsTable: async (searchTerm = '') => {
@@ -94,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tbody.innerHTML = filtered.map(song => {
                     const artist = artists.find(a => a.id == song.artist_id) || { name: 'Unknown' };
                     const duration = `${Math.floor(song.duration_seconds / 60)}:${(song.duration_seconds % 60).toString().padStart(2, '0')}`;
-                    return `<tr><td><img src="${API_URL}${song.artwork_url}" class="table-thumb"></td><td>${song.title}</td><td>${artist.name}</td><td>${song.genre || 'N/A'}</td><td>${duration}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${song.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${song.id}"><i class="fas fa-trash"></i></button></td></tr>`;
+                    return `<tr><td><img src="${resolveAssetUrl(song.artwork_url)}" class="table-thumb"></td><td>${song.title}</td><td>${artist.name}</td><td>${song.genre || 'N/A'}</td><td>${duration}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${song.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${song.id}"><i class="fas fa-trash"></i></button></td></tr>`;
                 }).join('') || `<tr><td colspan="6">No songs found.</td></tr>`;
                 app.initScrollAnimations(tbody);
             },
@@ -116,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderBandMembersTable: async () => {
                 const members = await api.get('/api/band-members');
                 const tbody = document.querySelector('#band-members-section tbody');
-                tbody.innerHTML = members.map(member => `<tr><td><img src="${API_URL}${member.image_url}" class="table-thumb"></td><td>${member.name}</td><td>${member.role}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${member.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${member.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="4">No band members found.</td></tr>`;
+                tbody.innerHTML = members.map(member => `<tr><td><img src="${resolveAssetUrl(member.image_url)}" class="table-thumb"></td><td>${member.name}</td><td>${member.role}</td><td class="actions"><button class="admin-btn-icon edit" data-id="${member.id}"><i class="fas fa-edit"></i></button><button class="admin-btn-icon delete" data-id="${member.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="4">No band members found.</td></tr>`;
                 app.initScrollAnimations(tbody);
             },
             renderVideosTable: async () => {

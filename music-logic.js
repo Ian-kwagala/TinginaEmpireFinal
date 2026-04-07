@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const artistSongs = allSongs.filter(s => s.artist_id === artist.id);
             const totalPlays = artistSongs.reduce((sum, song) => sum + (song.play_count || 0), 0);
             return `<div class="artist-profile-card" data-artist-id="${artist.id}">
-                        <div class="artist-image-container"><img src="${LiveAPI.API_URL}${artist.image_url}" alt="${artist.name}"></div>
+                        <div class="artist-image-container"><img src="${LiveAPI.resolveAssetUrl(artist.image_url)}" alt="${artist.name}"></div>
                         <div class="artist-compact-info"><h3>${artist.name}</h3><p>${artistSongs[0]?.genre || 'Diverse Artist'}</p></div>
                         <div class="artist-expanded-details">
                             <p class="bio">${artist.bio || 'One of TinginaEmpire\'s finest artists.'}</p>

@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <div class="track-row">
                     <span class="track-rank">${index + 1}</span>
                     <div class="track-artwork">
-                        <img src="${LiveAPI.API_URL}${song.artwork_url}" alt="${song.title}">
+                        <img src="${LiveAPI.resolveAssetUrl(song.artwork_url)}" alt="${song.title}">
                         <div class="track-play-btn" data-song-id="${song.id}"><i class="fas fa-play"></i></div>
                     </div>
                     <div class="track-info">

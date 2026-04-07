@@ -1,7 +1,14 @@
 // FILE: login.js (Final Version Connected to Backend)
 
 document.addEventListener('DOMContentLoaded', function () {
-    const API_URL = 'http://localhost:3000';
+    const getApiBaseUrl = () => {
+        if (window.location.protocol === 'file:') {
+            return 'http://localhost:3000';
+        }
+        return window.location.origin;
+    };
+
+    const API_URL = getApiBaseUrl();
 
     const showLoginBtn = document.getElementById('show-login-btn');
     const showSignupBtn = document.getElementById('show-signup-btn');

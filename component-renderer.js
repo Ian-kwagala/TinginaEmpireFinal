@@ -12,7 +12,7 @@ function renderTrackRow(song, rank, artists, userLikes) {
         <div class="track-row" data-song-id="${song.id}">
             <span class="track-rank">${rank}</span>
             <div class="track-artwork">
-                <img src="${LiveAPI.API_URL}${song.artwork_url}" alt="${song.title}">
+                <img src="${LiveAPI.resolveAssetUrl(song.artwork_url)}" alt="${song.title}">
                 <div class="track-play-btn"><i class="fas fa-play"></i></div>
             </div>
             <div class="track-info">
@@ -23,7 +23,7 @@ function renderTrackRow(song, rank, artists, userLikes) {
                 <button class="icon-btn like-btn ${isLiked ? 'active' : ''}" title="Like Song">
                     <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
                 </button>
-                <a href="${LiveAPI.API_URL}${song.audio_url}" download="${song.title} - ${artist.name}.mp3" class="icon-btn download-btn" title="Download">
+                <a href="${LiveAPI.resolveAssetUrl(song.audio_url)}" download="${song.title} - ${artist.name}.mp3" class="icon-btn download-btn" title="Download">
                     <i class="fas fa-download"></i>
                 </a>
             </div>

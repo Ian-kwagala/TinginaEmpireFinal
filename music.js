@@ -1,7 +1,20 @@
 // FILE: music.js (Final, Complete Version with All Page Logic)
 
 document.addEventListener('DOMContentLoaded', function() {
-    const API_URL = 'http://localhost:3000';
+    const getApiBaseUrl = () => {
+        if (window.location.protocol === 'file:') {
+            return 'http://localhost:3000';
+        }
+        return window.location.origin;
+    };
+
+    const API_URL = getApiBaseUrl();
+
+    const resolveAssetUrl = (url) => {
+        if (!url) return '';
+        if (/^https?:\/\//i.test(url)) return url;
+        return `${API_URL}${url}`;
+    };
 
     // --- Data (Fetched from backend) ---
     let artists = [];
@@ -69,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const artistsForFilter = [{ id: 0, name: "All Artists", image_url: "./Photos/crowd.jpg" }, ...artists];
         artistsContainer.innerHTML = artistsForFilter.map(artist => `
             <div class="artist-display ${artist.id == activeArtistId ? 'active' : ''}" data-artist-id="${artist.id}">
-                <img src="${artist.id === 0 ? artist.image_url : API_URL + artist.image_url}" alt="${artist.name}">
+                <img src="${artist.id === 0 ? artist.image_url : resolveAssetUrl(artist.image_url)}" alt="${artist.name}">
                 <h4>${artist.name}</h4>
             </div>
         `).join('');
@@ -97,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const artist = artists.find(a => a.id == song.artist_id) || { name: 'Unknown' };
                 return `
                 <div class="song-card">
-                    <div class="song-card-image" style="background-image: url('${API_URL + song.artwork_url}')"></div>
+                    <div class="song-card-image" style="background-image: url('${resolveAssetUrl(song.artwork_url)}')"></div>
                     <div class="song-card-content">
                         <h4 class="song-card-title">${song.title}</h4>
                         <p class="song-card-artist">${artist.name}</p>
@@ -145,11 +158,11 @@ document.addEventListener('DOMContentLoaded', function() {
         function playSong(song) {
             if (!song) return;
             playerEl.classList.add('visible');
-            artwork.src = API_URL + song.artwork_url;
+            artwork.src = resolveAssetUrl(song.artwork_url);
             title.textContent = song.title;
             const songArtist = artists.find(a => a.id == song.artist_id);
             artist.textContent = songArtist ? songArtist.name : 'Unknown';
-            audio.src = API_URL + song.audio_url;
+            audio.src = resolveAssetUrl(song.audio_url);
             audio.play();
         }
 
@@ -233,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const songToDownload = songs.find(s => s.id == songId);
                     if (songToDownload) {
                         const link = document.createElement('a');
-                        link.href = API_URL + songToDownload.audio_url;
+                        link.href = resolveAssetUrl(songToDownload.audio_url);
                         const artistName = artists.find(a => a.id == songToDownload.artist_id)?.name || 'TinginaEmpire';
                         link.download = `${songToDownload.title} - ${artistName}.mp3`;
                         document.body.appendChild(link);

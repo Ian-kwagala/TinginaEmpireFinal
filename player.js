@@ -53,16 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
         currentSongIndex = playlist.findIndex(s => s.id === song.id);
         const artist = allArtists.find(a => a.id === song.artist_id) || { name: 'Unknown' };
         
-        artworkEl.src = LiveAPI.API_URL + song.artwork_url;
+        artworkEl.src = LiveAPI.resolveAssetUrl(song.artwork_url);
         titleEl.textContent = song.title;
         artistEl.textContent = artist.name;
         if(downloadBtn) {
-            downloadBtn.href = LiveAPI.API_URL + song.audio_url;
+            downloadBtn.href = LiveAPI.resolveAssetUrl(song.audio_url);
             downloadBtn.download = `${song.title} - ${artist.name}.mp3`;
         }
         
-        if (audio.src !== (LiveAPI.API_URL + song.audio_url)) {
-            audio.src = LiveAPI.API_URL + song.audio_url;
+        if (audio.src !== LiveAPI.resolveAssetUrl(song.audio_url)) {
+            audio.src = LiveAPI.resolveAssetUrl(song.audio_url);
         }
         
         audio.currentTime = startTime;
