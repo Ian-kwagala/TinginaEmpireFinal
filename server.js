@@ -58,6 +58,14 @@ app.use(express.json());
 // Static folder kept for backward compatibility, but won't be used for new uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Serve frontend files from project root
+app.use(express.static(path.join(__dirname)));
+
+// Root route -> index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 // 3. CLOUDINARY STORAGE SETUP
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
