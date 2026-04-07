@@ -1,16 +1,30 @@
 // FILE: database.js (Final Corrected Version)
-
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'TinginaEmpire', // CORRECTED
-    password: 'ianmufasa9114',
-    port: 5432,
-});
+let pool;
 
+// Check if we are on Render (production) or Local (development)
+if (process.env.DATABASE_URL) {
+    // RENDER / PRODUCTION CONFIG
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false // Required for Render
+        }
+    });
+} else {
+    // LOCAL / DEVELOPMENT CONFIG (Your pgAdmin settings)
+    pool = new Pool({
+        user: 'postgres',
+        host: 'localhost',
+        database: 'TinginaEmpire',
+        password: 'ianmufasa9114',
+        port: 5432,
+    });
+}
+
+// The rest of your functions (setupDatabase, getArtists, etc.) stay exactly the same.
 const setupDatabase = async () => {
     const client = await pool.connect();
     try {
